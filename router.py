@@ -34,9 +34,10 @@ def map():
 
     config = [
 
-        (r'/mailroom/api/mail', getattr(api_mailroom, 'ApiQrcodeXHR')),
-        (r'/mailroom/web/index', getattr(web, 'WebQrcodeIndexHandle')),
-        (r'/', getattr(web, 'WebQrcodeIndexHandle')),
+        (r'/mailroom/api/email', getattr(api_mailroom, 'ApiSendMailXHR')),
+        (r'/mailroom/web/index', getattr(web, 'WebMailroomIndexHandle')),
+        (r'/smsbox/web/index', getattr(web, 'WebSmsboxIndexHandle')),
+        (r'/', getattr(web, 'WebMailroomIndexHandle')),
 
         # comm
         ('.*', getattr(base_handler, 'UrlNotFoundXHR'))

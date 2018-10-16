@@ -35,13 +35,13 @@ from tornado_swagger import swagger
 from qrcode import *
 
 
-class WebQrcodeIndexHandle(tornado.web.RequestHandler):
+class WebMailroomIndexHandle(tornado.web.RequestHandler):
     def get(self):
         logging.info("GET %r", self.request.uri)
         self.render('qrcode.html')
 
 
-class WebImageIndexHandle(tornado.web.RequestHandler):
+class WebSmsboxIndexHandle(tornado.web.RequestHandler):
     def get(self):
         logging.info("GET %r", self.request.uri)
         self.render('image-verify.html')
