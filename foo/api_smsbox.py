@@ -36,12 +36,12 @@ from tornado_swagger import swagger
 
 
 @swagger.model()
-class SendMailReq:
-    def __init__(self, fromEmail, fromName, toEmail, subject, content):
-        self.fromEmail = fromEmail
+class SendSmsReq:
+    def __init__(self, smsUser, templateId, phone, fromName, content):
+        self.smsUser = smsUser
+        self.templateId = templateId
+        self.phone = phone
         self.fromName = fromName
-        self.toEmail = toEmail
-        self.subject = subject
         self.content = content
 
 
@@ -50,10 +50,10 @@ class ApiSendMailXHR(tornado.web.RequestHandler):
     @swagger.operation(nickname='post')
     def post(self):
         """
-            @description: 发送email
+            @description: 发送短信
 
             @param body:
-            @type body: C{SendMailReq}
+            @type body: C{SendSmsReq}
             @in body: body
             @required body: True
 
@@ -74,33 +74,44 @@ class ApiSendMailXHR(tornado.web.RequestHandler):
             self.finish()
             return
 
-        params = {
-            "apiUser": SEND_CLOUD_API_USER,  # 使用api_user和api_key进行验证
-            "apiKey": SEND_CLOUD_API_KEY,
-            "to": data["toEmail"],  # 收件人地址, 用正确邮件地址替代, 多个地址用';'分隔
-            "from": data["fromEmail"],  # 发信人, 用正确邮件地址替代
-            "fromName": data["fromName"],
-            "subject": data["subject"],
-            "html": data["content"]
+        param = {
+            'smsUser': SEND_CLOUD_SMS_USER,
+            'templateId' : data["templateId"],
+            'msgType': 0,
+            'phone' : data["phone"],
+            'vars' : '{"%content%":data["content"]}'
         }
 
+        param_keys = list(param.keys())
+        param_keys.sort()
+
+        param_str = ""
+        for key in param_keys:
+            param_str += key + '=' + str(param[key]) + '&'
+        param_str = param_str[:-1]
+
+        sign_str = SEND_CLOUD_SMS_KEY + '&' + param_str + '&' + SEND_CLOUD_SMS_KEY
+        sign = generate_md5(sign_str)
+
+        param['signature'] = sign
+
         try:
-            resp = requests.post(SEND_CLOUD_EMAIL_API_URL, params)
+            resp = requests.post(SEND_CLOUD_SMS_API_URL, params)
             resp = JSON.loads(resp.text)
             logging.debug("%r", resp)
 
             if resp["statusCode"] == 200 and resp["result"] is True:
-                logging.info("Success[200]: send email=[%r]", params)
+                logging.info("Success[200]: send sms=[%r]", params)
                 self.set_status(200) # Success
                 self.write(JSON.dumps({"errCode":200,"errMsg":"Success"}))
                 self.finish()
             else:
-                logging.error("Server Error[500]: send email=[%r] error=[%r]", params, resp["message"])
+                logging.error("Server Error[500]: send sms=[%r] error=[%r]", params, resp["message"])
                 self.set_status(200) # Server Error
                 self.write(JSON.dumps({"errCode":500,"errMsg":resp["message"]}))
                 self.finish()
         except Exception as e:
-            logging.error("Server Error[500]: send email=[%r] error=[%r]", params, repr(e))
+            logging.error("Server Error[500]: send sms=[%r] error=[%r]", params, repr(e))
             self.set_status(200) # Server Error
             self.write(JSON.dumps({"errCode":500,"errMsg":repr(e)}))
             self.finish()

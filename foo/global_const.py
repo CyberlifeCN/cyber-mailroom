@@ -21,6 +21,9 @@ DEFAULT_ID = "00000000000000000000000000000000"
 PAGE_SIZE_LIMIT = 20
 
 SEND_CLOUD_EMAIL_API_URL = "http://api.sendcloud.net/apiv2/mail/send"
+SEND_CLOUD_API_USER = '***'
+SEND_CLOUD_API_KEY = '***'
+
 SEND_CLOUD_SMS_API_URL = "http://www.sendcloud.net/smsapi/send"
-SEND_CLOUD_API_USER = '7x24hs'
-SEND_CLOUD_API_KEY = 'lYXzKnIM5whJkqzZ'
+SEND_CLOUD_SMS_USER = '***'
+SEND_CLOUD_SMS_KEY = '***'
