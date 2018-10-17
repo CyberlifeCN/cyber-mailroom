@@ -26,6 +26,8 @@ import json as JSON # 启用别名，不会跟方法里的局部变量混淆
 from comm import *
 from global_const import *
 from base_handler import *
+from foo.config import Config
+CONF_FILE = "/etc/cyberlife/mailroom.conf"
 
 from tornado.escape import json_encode, json_decode
 from tornado.httpclient import *
@@ -74,9 +76,13 @@ class ApiSendMailXHR(tornado.web.RequestHandler):
             self.finish()
             return
 
+        # parse conf file
+        conf = Config(CONF_FILE)
+        conf.load_conf()
+
         params = {
-            "apiUser": SEND_CLOUD_API_USER,  # 使用api_user和api_key进行验证
-            "apiKey": SEND_CLOUD_API_KEY,
+            "apiUser": conf.get_email_api_user(),  # 使用api_user和api_key进行验证
+            "apiKey": conf.get_email_api_key(),
             "to": data["toEmail"],  # 收件人地址, 用正确邮件地址替代, 多个地址用';'分隔
             "from": data["fromEmail"],  # 发信人, 用正确邮件地址替代
             "fromName": data["fromName"],
@@ -85,7 +91,7 @@ class ApiSendMailXHR(tornado.web.RequestHandler):
         }
 
         try:
-            resp = requests.post(SEND_CLOUD_EMAIL_API_URL, params)
+            resp = requests.post(conf.get_email_api_url(), params)
             resp = JSON.loads(resp.text)
             logging.debug("%r", resp)
 

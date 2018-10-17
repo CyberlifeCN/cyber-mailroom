@@ -28,6 +28,14 @@ make install DESTDIR=%{buildroot}
 %post
 /usr/bin/systemctl daemon-reload
 
+for default_config in /etc/cyberlife/*mailroom*.default
+do
+        config=${default_config%.default}
+        if [ ! -f $config ]; then
+                cp $default_config $config
+        fi
+done
+
 systemctl enable cyber-mailroom.service
 systemctl restart cyber-mailroom.service
 systemctl enable cyber-mailroom-swagger.service
@@ -39,6 +47,7 @@ systemctl restart nginx.service
 /usr/bin/systemctl daemon-reload
 
 %files
+/etc/cyberlife/*
 /etc/nginx/location.d/*
 /etc/nginx/conf.d/*
 /opt/cyberlife/service/cyber-mailroom/*

@@ -1,0 +1,33 @@
+
+###########################mysql config########################
+[db]
+db_name=torndb
+db_host=127.0.0.1
+db_port=3306
+db_user=root
+db_pass=mysql
+
+###########################sendcloud email config########################
+[email]
+EMAIL_API_URL = https://api.sendcloud.net/apiv2/mail/send
+EMAIL_API_USER = ***
+EMAIL_API_KEY = ***
+
+###########################sendcloud sms config########################
+[sms]
+SMS_API_URL = https://www.sendcloud.net/smsapi/send
+SMS_API_USER = ***
+SMS_API_KEY = ***
+
+###########################tornado config######################
+[tornado]
+tornado_port=7020
+
+###########################logging config######################
+[log]
+#log_level=DEBUG
+log_level=INFO
+log_path=
+
+###########################default value config#################
+[default]

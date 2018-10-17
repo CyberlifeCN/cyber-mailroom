@@ -27,6 +27,7 @@ import tornado.web
 from foo import comm
 from foo import base_handler
 from foo import api_mailroom
+from foo import api_smsbox
 from foo import web
 
 
@@ -36,6 +37,7 @@ def map():
 
         (r'/mailroom/api/email', getattr(api_mailroom, 'ApiSendMailXHR')),
         (r'/mailroom/web/index', getattr(web, 'WebMailroomIndexHandle')),
+        (r'/smsbox/api/sms', getattr(api_smsbox, 'ApiSendSmsXHR')),
         (r'/smsbox/web/index', getattr(web, 'WebSmsboxIndexHandle')),
         (r'/', getattr(web, 'WebMailroomIndexHandle')),
 

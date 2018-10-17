@@ -95,7 +95,7 @@ def generate_nonce_str(num):
 
 
 def generate_md5(fp):
-    m = md5()
+    m = hashlib.md5()
     m.update(fp)
     return m.hexdigest()
 

@@ -26,6 +26,8 @@ import json as JSON # 启用别名，不会跟方法里的局部变量混淆
 from comm import *
 from global_const import *
 from base_handler import *
+from foo.config import Config
+CONF_FILE = "/etc/cyberlife/mailroom.conf"
 
 from tornado.escape import json_encode, json_decode
 from tornado.httpclient import *
@@ -45,8 +47,8 @@ class SendSmsReq:
         self.content = content
 
 
-# /mailroom/api/email
-class ApiSendMailXHR(tornado.web.RequestHandler):
+# /smsbox/api/sms
+class ApiSendSmsXHR(tornado.web.RequestHandler):
     @swagger.operation(nickname='post')
     def post(self):
         """
@@ -74,8 +76,12 @@ class ApiSendMailXHR(tornado.web.RequestHandler):
             self.finish()
             return
 
+        # parse conf file
+        conf = Config(CONF_FILE)
+        conf.load_conf()
+
         param = {
-            'smsUser': SEND_CLOUD_SMS_USER,
+            'smsUser': conf.get_sms_api_user(),
             'templateId' : data["templateId"],
             'msgType': 0,
             'phone' : data["phone"],
@@ -90,28 +96,28 @@ class ApiSendMailXHR(tornado.web.RequestHandler):
             param_str += key + '=' + str(param[key]) + '&'
         param_str = param_str[:-1]
 
-        sign_str = SEND_CLOUD_SMS_KEY + '&' + param_str + '&' + SEND_CLOUD_SMS_KEY
+        sign_str = conf.get_sms_api_key() + '&' + param_str + '&' + conf.get_sms_api_key()
         sign = generate_md5(sign_str)
 
         param['signature'] = sign
 
         try:
-            resp = requests.post(SEND_CLOUD_SMS_API_URL, params)
+            resp = requests.post(conf.get_sms_api_url(), param)
             resp = JSON.loads(resp.text)
             logging.debug("%r", resp)
 
             if resp["statusCode"] == 200 and resp["result"] is True:
-                logging.info("Success[200]: send sms=[%r]", params)
+                logging.info("Success[200]: send sms=[%r]", param)
                 self.set_status(200) # Success
                 self.write(JSON.dumps({"errCode":200,"errMsg":"Success"}))
                 self.finish()
             else:
-                logging.error("Server Error[500]: send sms=[%r] error=[%r]", params, resp["message"])
+                logging.error("Server Error[500]: send sms=[%r] error=[%r]", param, resp["message"])
                 self.set_status(200) # Server Error
                 self.write(JSON.dumps({"errCode":500,"errMsg":resp["message"]}))
                 self.finish()
         except Exception as e:
-            logging.error("Server Error[500]: send sms=[%r] error=[%r]", params, repr(e))
+            logging.error("Server Error[500]: send sms=[%r] error=[%r]", param, repr(e))
             self.set_status(200) # Server Error
             self.write(JSON.dumps({"errCode":500,"errMsg":repr(e)}))
             self.finish()
