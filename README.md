@@ -21,7 +21,7 @@ http://mailroom.cyber-life.cn/swagger/spec.html
   "content": "这是一封测试邮件",
   "fromEmail": "noreply@cyber-life.cn",
   "subject": "发送测试邮件",
-  "toEmail": "thomas.zh@qq.com",
+  "toEmail": "thomas@cyber-life.cn",
   "fromName": "cyber-life.cn"
 }
 ```
