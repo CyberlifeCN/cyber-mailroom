@@ -15,6 +15,26 @@ http://mailroom.cyber-life.cn/swagger/spec.html
 * http://mailroom.cyber-life.cn/mailroom/web/index
 * http://mailroom.cyber-life.cn/smsbox/web/index
 
+### 发送email例子
+```
+{
+  "content": "这是一封测试邮件",
+  "fromEmail": "noreply@cyber-life.cn",
+  "subject": "发送测试邮件",
+  "toEmail": "thomas.zh@qq.com",
+  "fromName": "cyber-life.cn"
+}
+```
+### 发送sms例子
+```
+{
+  "content": "{'ekey':'123456'}",
+  "smsUser": "Test",
+  "fromName": "cyber-life.cn",
+  "phone": "13910586316",
+  "templateId": "151"
+}
+```
 
 ## 安装软件包
 ### 安装 nginx
@@ -46,3 +66,14 @@ pip install requests
 ```
 rpm -Uvh cyber-mailroom-1.0.0-3_git_ed98137.x86_64.rpm --force
 ```
+
+### 安装后修改配置参数
+```
+vi /etc/cyberlife/mailroom.conf
+
+EMAIL_API_USER = ***
+EMAIL_API_KEY = ***
+SMS_API_USER = ***
+SMS_API_KEY = ***
+```
+将***修改为正确的值

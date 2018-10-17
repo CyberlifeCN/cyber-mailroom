@@ -85,7 +85,7 @@ class ApiSendSmsXHR(tornado.web.RequestHandler):
             'templateId' : data["templateId"],
             'msgType': 0,
             'phone' : data["phone"],
-            'vars' : '{"%content%":data["content"]}'
+            'vars' : data["content"]
         }
 
         param_keys = list(param.keys())
@@ -103,8 +103,8 @@ class ApiSendSmsXHR(tornado.web.RequestHandler):
 
         try:
             resp = requests.post(conf.get_sms_api_url(), param)
+            logging.debug("%r", resp.text)
             resp = JSON.loads(resp.text)
-            logging.debug("%r", resp)
 
             if resp["statusCode"] == 200 and resp["result"] is True:
                 logging.info("Success[200]: send sms=[%r]", param)
