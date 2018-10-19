@@ -36,6 +36,8 @@ do
         fi
 done
 
+mkdir -p /opt/cyberlife/logs
+
 systemctl enable cyber-mailroom.service
 systemctl restart cyber-mailroom.service
 systemctl enable cyber-mailroom-swagger.service
